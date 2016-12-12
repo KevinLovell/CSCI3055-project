@@ -18,16 +18,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import javax.mail.*;
-import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 import java.util.Properties;
 
 public class Main extends Application {
-
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -66,7 +61,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("ColdMail - Homepage");
         OpenHomepage(primaryStage);
-
     }
 
     public void OpenHomepage(Stage primaryStage){
@@ -261,8 +255,6 @@ public class Main extends Application {
         listBorder.setArcWidth(10);
         listBorder.setArcHeight(10);
 
-
-
         Rectangle emailBorder = new Rectangle();
         emailBorder.setFill(Color.LIGHTGRAY);
         emailBorder.setX(705);
@@ -271,7 +263,6 @@ public class Main extends Application {
         emailBorder.setHeight(615);
         emailBorder.setArcWidth(10);
         emailBorder.setArcHeight(10);
-
 
         Label newLabel = new Label("    Compose    ");
         Label replyLabel = new Label("    Reply    ");
@@ -311,7 +302,6 @@ public class Main extends Application {
             }
         });
 
-
         Menu newMenu = new Menu();
         newMenu.setGraphic(newLabel);
         Menu replyMenu = new Menu();
@@ -320,7 +310,6 @@ public class Main extends Application {
         exitMenu.setGraphic(exitLabel);
         Menu logOutMenu = new Menu();
         logOutMenu.setGraphic(logOutLabel);
-
 
         layout.getChildren().add(messageNum);
         layout.getChildren().add(messagesLabel);
@@ -503,23 +492,37 @@ public class Main extends Application {
         send.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent ee) {
 
-                Thread t1 = new Thread(new Runnable() {
-                    public void run() {
-                        connectionThread.sendMail(toField.getText(), subjectField.getText(), messageField.getText());
-                    }
-                });
-                t1.start();
+                Properties props = System.getProperties();
+                props.put("mail.smtp.starttls.enable", "true");
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.host", "smtp.gmail.com");
+                props.put("mail.smtp.port", "587");
 
-                String host = "localhost";
+                Session session = Session.getInstance(props,
+                        new javax.mail.Authenticator() {
+                            protected PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication(username, password);
+                            }
+                        });
 
-                Properties properties = System.getProperties();
+                try {
+                    MimeMessage message = new MimeMessage(session);
+                    message.setFrom(new InternetAddress(username));
+                    message.setRecipients(Message.RecipientType.TO,
+                            InternetAddress.parse(toField.getText()));
+                    message.setSubject(subjectField.getText());
+                    message.setText(messageField.getText());
 
-                // Setup mail server
-                properties.setProperty("mail.smtp.host", host);
+                    Transport.send(message);
 
-                // Get the default Session object.
-                Session session = Session.getDefaultInstance(properties);
+                    System.out.println("Message Sent");
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
+                }
 
+                toField.clear();
+                subjectField.clear();
+                messageField.clear();
             }
 
         });
@@ -567,7 +570,6 @@ public class Main extends Application {
         emailLayout.getChildren().add(bannerImage);
         emailLayout.getChildren().add(send);
         emailLayout.getChildren().add(discard);
-
     }
 
 }

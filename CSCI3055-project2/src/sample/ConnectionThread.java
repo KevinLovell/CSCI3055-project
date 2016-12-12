@@ -6,7 +6,7 @@ import javax.mail.*;
 import java.util.Properties;
 
 public class ConnectionThread implements Runnable {
-    private String username, password, client, host;
+    private String username, password, host;
     private ObservableList<email> emails = FXCollections.observableArrayList();
     private Folder emailFolder;
     private Store store;
@@ -56,12 +56,6 @@ public class ConnectionThread implements Runnable {
 
     public ObservableList<email> getEmails() {
         return emails;
-    }
-
-
-    public void sendMail(String Address, String Subject, String Body) {
-        System.out.println(Address + Subject + Body);
-
     }
 
     public String mailBody(int index) {
