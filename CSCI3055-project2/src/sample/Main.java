@@ -1,3 +1,15 @@
+/*
+    Authors:
+    Mitchell Childerhose (100553756)
+    Kevin Lovell (100559665)
+
+    Date:
+    December 13th, 2016
+
+    Description:
+    Cold Mail application
+ */
+
 package sample;
 
 import javafx.application.Application;
@@ -493,10 +505,10 @@ public class Main extends Application {
             @Override public void handle(ActionEvent ee) {
 
                 Properties props = System.getProperties();
-                props.put("mail.smtp.starttls.enable", "true");
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.host", "smtp.gmail.com");
-                props.put("mail.smtp.port", "587");
+                props.put("mail.smtp.starttls.enable", "true"); //transport layer security protocol
+                props.put("mail.smtp.auth", "true"); //authentication of user
+                props.put("mail.smtp.host", "smtp.gmail.com"); //smtp server to connect to
+                props.put("mail.smtp.port", "587"); //smtp server port to connect to
 
                 Session session = Session.getInstance(props,
                         new javax.mail.Authenticator() {
